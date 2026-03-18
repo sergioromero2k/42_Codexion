@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codexion — Action Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #252535;
+    --accent: #00ff88;
+    --accent2: #ff3366;
+    --accent3: #7b5ea7;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --warning: #ffaa00;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    margin-bottom: 64px;
+    position: relative;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(0,255,136,0.08);
+    border: 1px solid rgba(0,255,136,0.2);
+    display: inline-block;
+    padding: 6px 14px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 12vw, 120px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--text);
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  h1 span {
+    color: var(--accent);
+    display: block;
+  }
+
+  .subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 20px;
+    line-height: 1.8;
+    max-width: 560px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .subtitle em {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  /* Stats bar */
+  .stats {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    background: var(--card);
+    margin-bottom: 56px;
+    animation: fadeUp 0.6s 0.3s ease both;
+    overflow: hidden;
+  }
+
+  .stat {
+    flex: 1;
+    padding: 20px 24px;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Section header */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .section-head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .section-head::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Day cards */
+  .days {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .day {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    padding: 28px 32px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .day:nth-child(1) { animation-delay: 0.1s; border-left-color: #00ff88; }
+  .day:nth-child(2) { animation-delay: 0.15s; border-left-color: #00ccff; }
+  .day:nth-child(3) { animation-delay: 0.2s; border-left-color: #aa88ff; }
+  .day:nth-child(4) { animation-delay: 0.25s; border-left-color: #ff3366; }
+  .day:nth-child(5) { animation-delay: 0.3s; border-left-color: #ffaa00; }
+  .day:nth-child(6) { animation-delay: 0.35s; border-left-color: #ff6600; }
+  .day:nth-child(7) { animation-delay: 0.4s; border-left-color: #ff66aa; }
+  .day:nth-child(8) { animation-delay: 0.45s; border-left-color: #88ff44; }
+
+  .day::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .day:hover { border-color: rgba(255,255,255,0.1); transform: translateX(4px); }
+  .day:hover::before { opacity: 1; }
+
+  .day-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    justify-content: space-between;
+  }
+
+  .day-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    flex: 1;
+  }
+
+  .day-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    line-height: 1;
+    color: var(--border);
+    min-width: 60px;
+    transition: color 0.2s;
+  }
+
+  .day:hover .day-num { color: rgba(255,255,255,0.15); }
+
+  .day-info { flex: 1; }
+
+  .day-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.5px;
+    line-height: 1.4;
+  }
+
+  .day-focus {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .day-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+
+  .day-body {
+    display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .day.open .day-body { display: block; }
+
+  .day-body p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(232,232,240,0.75);
+    margin-bottom: 12px;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .chip {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border: 1px solid;
+    letter-spacing: 1px;
+  }
+
+  .chip-fn { border-color: rgba(0,255,136,0.3); color: var(--accent); background: rgba(0,255,136,0.05); }
+  .chip-goal { border-color: rgba(255,170,0,0.3); color: var(--warning); background: rgba(255,170,0,0.05); }
+  .chip-tool { border-color: rgba(123,94,167,0.4); color: #aa88ff; background: rgba(123,94,167,0.06); }
+
+  .goal-box {
+    background: rgba(0,255,136,0.04);
+    border: 1px solid rgba(0,255,136,0.12);
+    padding: 14px 18px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    line-height: 1.6;
+  }
+
+  .goal-box::before {
+    content: '✓ GOAL // ';
+    opacity: 0.5;
+    font-size: 10px;
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Project spec section */
+  .spec-section {
+    margin-top: 64px;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+
+  .spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin-top: 24px;
+  }
+
+  .spec-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+  }
+
+  .spec-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .spec-card-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .spec-card-value code {
+    color: var(--accent);
+    background: rgba(0,255,136,0.08);
+    padding: 1px 4px;
+    font-size: 11px;
+  }
+
+  /* Args section */
+  .args-block {
+    background: #0c0c14;
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-top: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    overflow-x: auto;
+  }
+
+  .args-block .comment { color: var(--muted); }
+  .args-block .cmd { color: var(--accent); }
+  .args-block .arg { color: #00ccff; }
+  .args-block .str { color: var(--warning); }
+
+  /* Log example */
+  .log-block {
+    background: #050508;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    padding: 20px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    line-height: 2;
+    margin-top: 24px;
+  }
+
+  .log-block .ts { color: var(--muted); }
+  .log-block .cid { color: #00ccff; }
+  .log-block .action { color: var(--text); }
+  .log-block .dead { color: var(--accent2); font-weight: 700; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Progress tracker */
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #00ccff);
+    width: 0%;
+    transition: width 1s ease;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Toggle chevron */
+  .chevron {
+    font-size: 10px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    margin-left: 12px;
+  }
+
+  .day.open .chevron { transform: rotate(180deg); }
+
+  @media (max-width: 600px) {
+    .spec-grid { grid-template-columns: 1fr; }
+    .stats { flex-direction: column; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .stat:last-child { border-bottom: none; }
+    .day { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="tag">42 Curriculum · C · Concurrency</div>
+    <h1>CODE<span>XION</span></h1>
+    <p class="subtitle">
+      Simulate <em>coders</em> competing for <em>USB dongles</em> using POSIX threads, mutexes, and smart scheduling.
+      Master the race for resources before the deadline masters you.
+    </p>
+  </header>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">8</div>
+      <div class="stat-label">Days</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">8</div>
+      <div class="stat-label">Arguments</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Schedulers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">10</div>
+      <div class="stat-label">ms burnout max</div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>Action Plan</h2>
+  </div>
+
+  <div class="days">
+
+    <div class="day" onclick="toggle(this)">
+      <div class="day-header">
+        <div class="day-left">
+          <div class="day-num">01</div>
+          <div class="day-info">
+            <div class="day-title">Structure, Makefile & Argument Parsing</div>
+            <div class="day-focus">Project foundations</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div class="day-badge">Foundation</div>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="day-body">
+        <p>Set up the Git repository with the correct directory structure (<code>coders/</code>). Write the <strong>Makefile</strong> with the required rules <code>$(NAME)</code>, <code>all</code>, <code>clean</code>, <code>fclean</code>, and <code>re</code>, compiling with <code>-Wall -Wextra -Werror -pthread</code>.</p>
+        <p>Implement parsing for all 8 mandatory arguments. Validate that numbers are positive integers and that the <code>scheduler</code> field is exactly <code>fifo</code> or <code>edf</code>. Reject any invalid input with a clear error message.</p>
+        <div class="meta-row">
+          <span class="chip chip-fn">atoi</span>
+          <span class="chip chip-fn">strcmp</span>
+          <span class="chip chip-fn">fprintf</span>
+          <span class="chip chip-tool">Makefile</span>
+          <span class="chip chip-tool">Git repo</span>
+        </div>
+        <div class="goal-box">The program starts, validates all 8 arguments, and rejects invalid inputs (negatives, non-integers, wrong scheduler).</div>
+      </div>
+    </div>
+
+    <div class="day" onclick="toggle(this)">
+      <div class="day-header">
+        <div class="day-left">
+          <div class="day-num">02</div>
+          <div class="day-info">
+            <div class="day-title">Thread & Mutex Initialization</div>
+            <div class="day-focus">Data structures and base synchronization</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div class="day-badge">Structures</div>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="day-body">
+        <p>Define the main data structures: <code>t_coder</code> (id, compile_count, last_compile_time, state) and <code>t_dongle</code> (mutex, cond, cooldown_until, wait_queue). Initialize everything with <code>malloc</code> and <code>memset</code>.</p>
+        <p>Launch each coder's thread with <code>pthread_create</code>. Create one mutex per dongle plus a global log mutex. Ensure all threads start and finish cleanly with <code>pthread_join</code>. Remember: there are as many dongles as coders, arranged in a circle.</p>
+        <div class="meta-row">
+          <span class="chip chip-fn">pthread_create</span>
+          <span class="chip chip-fn">pthread_join</span>
+          <span class="chip chip-fn">pthread_mutex_init</span>
+          <span class="chip chip-fn">malloc / free</span>
+        </div>
+        <div class="goal-box">All N threads launch, print their coder number, and exit cleanly — no leaks, no crashes.</div>
+      </div>
+    </div>
+
+    <div class="day" onclick="toggle(this)">
+      <div class="day-header">
+        <div class="day-left">
+          <div class="day-num">03</div>
+          <div class="day-info">
+            <div class="day-title">Coder Routine — The Lifecycle</div>
+            <div class="day-focus">Compile → Debug → Refactor → repeat</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div class="day-badge">Core Logic</div>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="day-body">
+        <p>Implement the coder routine function: try to acquire both dongles (left and right), print <code>has taken a dongle</code> twice, simulate compilation with <code>usleep</code>, print <code>is compiling</code>, release the dongles, then move on to debugging and refactoring.</p>
+        <p>Use <code>gettimeofday</code> for log timestamps. Protect all output with the log mutex so lines never interleave. Record <code>last_compile_start</code> for each coder at the beginning of every compilation cycle.</p>
+        <div class="meta-row">
+          <span class="chip chip-fn">usleep</span>
+          <span class="chip chip-fn">gettimeofday</span>
+          <span class="chip chip-fn">pthread_mutex_lock/unlock</span>
+          <span class="chip chip-fn">write / printf</span>
+        </div>
+        <div class="goal-box">The compile→debug→refactor cycle works with logs in the correct format and precise millisecond timestamps.</div>
+      </div>
+    </div>
+
+    <div class="day" onclick="toggle(this)">
+      <div class="day-header">
+        <div class="day-left">
+          <div class="day-num">04</div>
+          <div class="day-info">
+            <div class="day-title">Monitor Thread — Burnout Detection</div>
+            <div class="day-focus">Coder death detected in ≤ 10ms</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div class="day-badge">Monitor</div>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="day-body">
+        <p>Create a dedicated monitor thread that continuously checks whether <code>now - last_compile_start ≥ time_to_burnout</code> for each coder. On detection, print the <code>burned out</code> log and raise a global stop flag so all threads terminate cleanly.</p>
+        <p>Also implement the success stop condition: when every coder has compiled at least <code>number_of_compiles_required</code> times. The monitor watches both conditions. The burnout log must appear within 10ms of the actual event — this requires the monitor to use very short sleeps (< 1ms).</p>
+        <div class="meta-row">
+          <span class="chip chip-fn">pthread_create</span>
+          <span class="chip chip-fn">gettimeofday</span>
+          <span class="chip chip-fn">usleep</span>
+          <span class="chip chip-goal">≤ 10ms precision</span>
+        </div>
+        <div class="goal-box">The program detects burnout and prints it within ≤ 10ms. The simulation stops cleanly in both termination cases.</div>
+      </div>
+    </div>
+
+    <div class="day" onclick="toggle(this)">
+      <div class="day-header">
+        <div class="day-left">
+          <div class="day-num">05</div>
+          <div class="day-info">
+            <div class="day-title">Priority Queue — Implementing the Heap</div>
+            <div class="day-focus">Min-Heap in C89 for FIFO/EDF</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div class="day-badge">Data Structures</div>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="day-body">
+        <p>The subject requires implementing a <strong>priority queue with a heap</strong> for the schedulers. Write the functions: <code>heap_push()</code>, <code>heap_pop()</code>, <code>heap_peek()</code>, and helpers <code>sift_up()</code> / <code>sift_down()</code>. The heap stores nodes containing the coder's id and its priority key.</p>
+        <p>For <strong>FIFO</strong>, the key is the arrival timestamp in the queue. For <strong>EDF</strong>, the key is the deadline (<code>last_compile_start + time_to_burnout</code>). The same heap serves both — only the comparator function changes. Use a Min-Heap (lower key = higher priority).</p>
+        <div class="meta-row">
+          <span class="chip chip-fn">malloc / free</span>
+          <span class="chip chip-fn">memset</span>
+          <span class="chip chip-tool">Min-Heap</span>
+          <span class="chip chip-tool">Comparator pattern</span>
+        </div>
+        <div class="goal-box">Inserting and extracting from the heap always returns the lowest-key element. Basic unit tests pass correctly.</div>
+      </div>
+    </div>
+
+    <div class="day" onclick="toggle(this)">
+      <div class="day-header">
+        <div class="day-left">
+          <div class="day-num">06</div>
+          <div class="day-info">
+            <div class="day-title">FIFO/EDF Schedulers & Dongle Cooldown</div>
+            <div class="day-focus">Fair arbitration + cooldown period</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div class="day-badge">Scheduling</div>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="day-body">
+        <p>Integrate the heap into each dongle's logic. When a coder wants a dongle: add them to the wait heap with their priority, then block with <code>pthread_cond_wait</code>. When the dongle is released, the releasing thread extracts the highest-priority waiter from the heap and wakes it with <code>pthread_cond_signal</code>.</p>
+        <p>Implement <strong>dongle cooldown</strong>: upon releasing a dongle, record <code>release_time</code>. If a coder tries to take it before <code>dongle_cooldown</code> ms have elapsed, they wait with <code>pthread_cond_timedwait</code> until the cooldown expires. The cooldown is part of the dongle's state, not the coder's.</p>
+        <div class="meta-row">
+          <span class="chip chip-fn">pthread_cond_wait</span>
+          <span class="chip chip-fn">pthread_cond_timedwait</span>
+          <span class="chip chip-fn">pthread_cond_broadcast</span>
+          <span class="chip chip-goal">FIFO ordering</span>
+          <span class="chip chip-goal">EDF deadline</span>
+        </div>
+        <div class="goal-box">With FIFO, coders access in arrival order. With EDF, whoever has the nearest deadline goes first. Cooldown prevents immediate reuse.</div>
+      </div>
+    </div>
+
+    <div class="day" onclick="toggle(this)">
+      <div class="day-header">
+        <div class="day-left">
+          <div class="day-num">07</div>
+          <div class="day-info">
+            <div class="day-title">Deadlocks, Liveness & Stress Testing</div>
+            <div class="day-focus">Robustness and edge cases</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div class="day-badge">Robustness</div>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="day-body">
+        <p>Test the classic deadlock scenario from the dining philosophers problem: two adjacent coders both grab their left dongle and wait forever for the right one. Solution: enforce a canonical acquisition order (always take the lower-index dongle first), breaking the circular wait (Coffman's condition).</p>
+        <p>With <strong>EDF</strong>, verify there is no starvation: a coder with a distant deadline cannot wait indefinitely if a dongle is available. Test with 1 coder, 2 coders (single-dongle edge case), and many coders. Use Valgrind or AddressSanitizer to catch data races and memory leaks.</p>
+        <div class="meta-row">
+          <span class="chip chip-goal">No deadlock</span>
+          <span class="chip chip-goal">No starvation</span>
+          <span class="chip chip-tool">Valgrind</span>
+          <span class="chip chip-tool">ThreadSanitizer</span>
+          <span class="chip chip-tool">Edge cases</span>
+        </div>
+        <div class="goal-box">The program is stable under any parameter combination. It never freezes, never crashes, and has no detectable data races.</div>
+      </div>
+    </div>
+
+    <div class="day" onclick="toggle(this)">
+      <div class="day-header">
+        <div class="day-left">
+          <div class="day-num">08</div>
+          <div class="day-info">
+            <div class="day-title">README, Memory & Final Submission</div>
+            <div class="day-focus">Technical documentation + cleanup</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <div class="day-badge">Submission</div>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="day-body">
+        <p>Verify there are no memory leaks: free all mutexes with <code>pthread_mutex_destroy</code>, all condition variables with <code>pthread_cond_destroy</code>, and every heap allocation. Run Valgrind and get a clean report.</p>
+        <p>Write the mandatory <strong>README.md</strong> in English with these sections: description, compilation/execution instructions, resources and AI usage, <em>Blocking cases handled</em> (deadlock, starvation, cooldown, burnout detection, log serialization) and <em>Thread synchronization mechanisms</em> (how mutex/cond coordinate dongle access, the monitor, and the logger). Verify the first line is italicised with the logins.</p>
+        <div class="meta-row">
+          <span class="chip chip-fn">pthread_mutex_destroy</span>
+          <span class="chip chip-fn">pthread_cond_destroy</span>
+          <span class="chip chip-fn">free</span>
+          <span class="chip chip-tool">README.md</span>
+          <span class="chip chip-tool">Git push</span>
+        </div>
+        <div class="goal-box">No memory leaks. Complete README with all required technical sections. Repository ready for evaluation and defence.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Spec section -->
+  <div class="spec-section">
+    <div class="section-head">
+      <h2>Quick Reference</h2>
+    </div>
+
+    <div class="args-block">
+      <span class="comment"># Program usage</span><br>
+      <span class="cmd">./codexion</span>
+      <span class="arg"> number_of_coders</span>
+      <span class="arg"> time_to_burnout</span>
+      <span class="arg"> time_to_compile</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span class="arg">time_to_debug</span>
+      <span class="arg"> time_to_refactor</span>
+      <span class="arg"> number_of_compiles_required</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span class="arg">dongle_cooldown</span>
+      <span class="str"> fifo|edf</span><br><br>
+      <span class="comment"># Example: 4 coders, 800ms burnout, 200ms compile, 200ms debug, 400ms refactor</span><br>
+      <span class="cmd">./codexion</span>
+      <span class="arg"> 4 800 200 200 400 10 50</span>
+      <span class="str"> edf</span>
+    </div>
+
+    <div class="log-block">
+      <span class="ts">0</span>&nbsp;&nbsp;&nbsp;<span class="cid">1</span> <span class="action">has taken a dongle</span><br>
+      <span class="ts">1</span>&nbsp;&nbsp;&nbsp;<span class="cid">1</span> <span class="action">has taken a dongle</span><br>
+      <span class="ts">1</span>&nbsp;&nbsp;&nbsp;<span class="cid">1</span> <span class="action">is compiling</span><br>
+      <span class="ts">201</span>&nbsp;<span class="cid">1</span> <span class="action">is debugging</span><br>
+      <span class="ts">401</span>&nbsp;<span class="cid">1</span> <span class="action">is refactoring</span><br>
+      <span class="ts">402</span>&nbsp;<span class="cid">2</span> <span class="action">has taken a dongle</span><br>
+      <span class="ts">403</span>&nbsp;<span class="cid">2</span> <span class="action">has taken a dongle</span><br>
+      <span class="ts">403</span>&nbsp;<span class="cid">2</span> <span class="action">is compiling</span><br>
+      <span class="ts">603</span>&nbsp;<span class="cid">2</span> <span class="action">is debugging</span><br>
+      <span class="ts">803</span>&nbsp;<span class="cid">2</span> <span class="action">is refactoring</span><br>
+      <span class="ts">1204</span> <span class="cid dead">3 burned out</span>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <div class="spec-card-label">Files to submit</div>
+        <div class="spec-card-value">
+          <code>Makefile</code><br>
+          <code>coders/*.c</code><br>
+          <code>coders/*.h</code><br>
+          <code>README.md</code>
+        </div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-label">Compilation flags</div>
+        <div class="spec-card-value">
+          <code>-Wall</code> <code>-Wextra</code> <code>-Werror</code><br>
+          <code>-pthread</code><br>
+          Compiler: <code>cc</code><br>
+          No global variables
+        </div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-label">Allowed functions</div>
+        <div class="spec-card-value">
+          <code>pthread_create/join</code><br>
+          <code>pthread_mutex_*</code><br>
+          <code>pthread_cond_*</code><br>
+          <code>gettimeofday</code> · <code>usleep</code>
+        </div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-card-label">Stop conditions</div>
+        <div class="spec-card-value">
+          1. A coder exceeds <code>time_to_burnout</code><br>
+          2. All coders compile ≥ <code>number_of_compiles_required</code><br>
+          Burnout log within <code>≤ 10ms</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>CODEXION · v1.1 · 42 Curriculum</span>
+    <span>8 DAYS · C · POSIX THREADS</span>
+  </footer>
+
+</div>
+
+<script>
+  function toggle(el) {
+    const wasOpen = el.classList.contains('open');
+    document.querySelectorAll('.day.open').forEach(d => d.classList.remove('open'));
+    if (!wasOpen) el.classList.add('open');
+  }
+
+  // Animate days on load
+  document.querySelectorAll('.day').forEach((day, i) => {
+    day.style.opacity = '0';
+    setTimeout(() => {
+      day.style.transition = 'opacity 0.4s ease, transform 0.4s ease, border-color 0.2s, transform 0.2s';
+      day.style.opacity = '1';
+    }, 100 + i * 60);
+  });
+
+  // Open first day by default
+  setTimeout(() => {
+    document.querySelector('.day').classList.add('open');
+  }, 200);
+</script>
+</body>
+</html>
