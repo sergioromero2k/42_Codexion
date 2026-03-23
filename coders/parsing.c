@@ -6,11 +6,18 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 05:23:17 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/22 19:30:19 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/22 20:52:44 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parsing.h"
+
+/**
+ * Chec if a sring represents a validate positive number.
+ * 
+ * @param str Input string.
+ * @return 1 if valid number, 0 otherwise.
+ */
 
 static int	is_valid_number(char *str)
 {
@@ -31,6 +38,13 @@ static int	is_valid_number(char *str)
 	}
 	return (1);
 }
+/**
+ * Parse scheduler type from string and set in config.
+ * 
+ * @param config Pointer to configuration struct.
+ * @param str Schduler string ("fifo" or "edf").
+ * @return 0 on success, 1 on error.
+ */
 
 int	parse_config_2(t_config *config, char *str)
 {
@@ -42,6 +56,15 @@ int	parse_config_2(t_config *config, char *str)
 		return (write(2, "Error: Scheduler must be 'fifo' or 'edf'\n", 41), 1);
 	return (0);
 }
+
+/**
+ * Parse command-line arguments into configuration struct.
+ * 
+ * @param config Pointer to configuration struct.
+ * @param argc Argument count.
+ * @param argv Argument vector.
+ * @return 0 on success, 1 on error.
+ */
 
 int	parse_config(t_config *config, int argc, char **argv)
 {
