@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:47:22 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/23 01:11:53 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/25 06:24:44 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,6 @@ typedef struct s_env
 
 int					parse_config(t_config *config, int argc, char **argv);
 int					parse_config_2(t_config *config, char *str);
+int 				init_simulation(t_env *env)
 
 #endif
