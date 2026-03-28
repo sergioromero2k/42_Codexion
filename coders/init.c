@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 06:22:41 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/28 10:18:16 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/28 20:47:10 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,17 @@ void	cleanup(t_env *env, int i)
  */
 void	*coder_routine(void *arg)
 {
-	t_coder	*me;
-
-	me = (t_coder *)arg;
-	pthread_mutex_lock(me->log_lock);
-	printf("%lld Coder %d: has taken a dongle\n", get_timestamp(me->start_time),
-		me->id);
-	pthread_mutex_unlock(me->log_lock);
-	return (NULL);
+	t_coder *me = (t_coder *) arg;
+	if( me->id % 2 == 0) 
+		usleep(1500);
+	
+	while(...) {
+		take_dongles(me);
+		coder_compile(me);
+		drop_dongles(me);
+		coder_sleep_and_think(me);
+	}
+	return NULL;
 }
 
 /**

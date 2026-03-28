@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:47:22 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/28 10:15:18 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/28 20:46:24 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,8 @@ int					init_simulation(t_env *env, int n);
 void				start_simulation(t_env *env, int n);
 long long			get_time_in_ms(void);
 long long			get_timestamp(long long start_time);
+void				take_dongles(t_coder *me);
+void				drop_dongles(t_coder *me);
+void				coder_compile(t_coder *me);
+void				coder_sleep_and_think(t_coder *me);
 #endif

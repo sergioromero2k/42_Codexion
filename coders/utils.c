@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 09:23:30 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/28 10:13:18 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/28 19:58:07 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ long long	get_time_in_ms(void)
 }
 
 /**
- * calculates how much has passed since the simulation started.
+ * Calculates how much has passed since the simulation started.
  *
  * @param star_time The time saved at the beginning in env->start_time.
  * @return long long Elapsed milliseconds (0, 100, 2500, etc).
