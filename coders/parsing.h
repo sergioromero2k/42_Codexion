@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:47:22 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/25 06:24:44 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/28 10:15:18 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/time.h>
 # include <unistd.h>
 
 typedef enum s_schedule
@@ -52,7 +53,8 @@ typedef struct s_coder
 	int				id;
 	pthread_t		thread;
 	int				compile_count;
-	long			last_compile_time;
+	long long		last_compile_time;
+	long long		start_time;
 	t_dongle		*left_dongle;
 	t_dongle		*right_dongle;
 	pthread_mutex_t	*log_lock;
@@ -65,10 +67,16 @@ typedef struct s_env
 	t_coder			*coders;
 	t_dongle		*dongles;
 	pthread_mutex_t	log_lock;
+	long long		start_time;
 }					t_env;
 
 int					parse_config(t_config *config, int argc, char **argv);
 int					parse_config_2(t_config *config, char *str);
-int 				init_simulation(t_env *env)
-
+void				cleanup(t_env *env, int i);
+void				*coder_routine(void *arg);
+int					inizialite(t_env *env, int n);
+int					init_simulation(t_env *env, int n);
+void				start_simulation(t_env *env, int n);
+long long			get_time_in_ms(void);
+long long			get_timestamp(long long start_time);
 #endif

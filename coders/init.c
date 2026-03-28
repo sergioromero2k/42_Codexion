@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 06:22:41 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/28 09:08:42 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/28 10:18:16 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ void	*coder_routine(void *arg)
 
 	me = (t_coder *)arg;
 	pthread_mutex_lock(me->log_lock);
-	printf("Coder %d: ¡Estoy en la mesa!\n", me->id);
+	printf("%lld Coder %d: has taken a dongle\n", get_timestamp(me->start_time),
+		me->id);
 	pthread_mutex_unlock(me->log_lock);
 	return (NULL);
 }
@@ -86,6 +87,7 @@ int	init_simulation(t_env *env, int n)
 		return (1);
 	pthread_mutex_init(&env->log_lock, NULL);
 	i = 0;
+	env->start_time = get_time_in_ms();
 	while (++i < n)
 	{
 		if (pthread_mutex_init(&env->dongles[i].mutex, NULL) != 0)
@@ -93,6 +95,7 @@ int	init_simulation(t_env *env, int n)
 		env->coders[i].id = i + 1;
 		env->coders[i].log_lock = &env->log_lock;
 		env->coders[i].config = &env->config;
+		env->coders[i].start_time = env->start_time;
 		env->coders[i].right_dongle = &env->dongles[i];
 		env->coders[i].left_dongle = &env->dongles[(i + 1) % n];
 	}
