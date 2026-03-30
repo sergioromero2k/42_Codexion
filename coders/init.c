@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 06:22:41 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/28 20:47:10 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/30 14:08:06 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,27 +25,6 @@ void	cleanup(t_env *env, int i)
 	pthread_mutex_destroy(&env->log_lock);
 	free(env->coders);
 	free(env->dongles);
-}
-
-/**
- * Main routine for each coder thread.
- *
- * @param arg Pointer to the specific t_coder structure.
- * @return void* Returns NULL upon thread completion.
- */
-void	*coder_routine(void *arg)
-{
-	t_coder *me = (t_coder *) arg;
-	if( me->id % 2 == 0) 
-		usleep(1500);
-	
-	while(...) {
-		take_dongles(me);
-		coder_compile(me);
-		drop_dongles(me);
-		coder_sleep_and_think(me);
-	}
-	return NULL;
 }
 
 /**
@@ -114,6 +93,7 @@ int	init_simulation(t_env *env, int n)
 void	start_simulation(t_env *env, int n)
 {
 	int	i;
+	pthread_t monitor_thread;
 
 	i = 0;
 	while (i < n)
@@ -122,6 +102,7 @@ void	start_simulation(t_env *env, int n)
 			&env->coders[i]);
 		i++;
 	}
+	pthread_create(&monitor_thread, NULL, monitor_routine, env);
 	i = 0;
 	while (i < n)
 	{
@@ -129,3 +110,4 @@ void	start_simulation(t_env *env, int n)
 		i++;
 	}
 }
+
