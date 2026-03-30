@@ -6,11 +6,11 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 06:22:41 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/30 14:08:06 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/31 00:56:58 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
+#include "codexion.h"
 
 /**
  * Destroys initialized mutex and frees allocated memory.
@@ -21,7 +21,10 @@
 void	cleanup(t_env *env, int i)
 {
 	while (--i >= 0)
+	{
 		pthread_mutex_destroy(&env->dongles[i].mutex);
+		pthread_mutex_destroy(&env->coders[i].start_time);
+	}
 	pthread_mutex_destroy(&env->log_lock);
 	free(env->coders);
 	free(env->dongles);
@@ -52,34 +55,38 @@ int	inizialite(t_env *env, int n)
 	return (0);
 }
 
-/**
- * Sets up the simulation by initializing mutexes and linking resources.
- * Handles the "Circular Table" logic: assigning right and left dongles.
- *
- * @param env Pointer to the main environment structure.
- * @param n Total number of coders participating.
- * @return int 0 on success, 1 if any mutex initialization fails.
- */
+static int	init_coder(t_env *env, int i, int n)
+{
+	if (pthread_mutex_init(&env->dongles[i].mutex, NULL) != 0)
+		return (cleanup(env, i), 1);
+	if (pthread_mutex_init(&env->coders[i].state_lock, NULL) != 0)
+		return (cleanup(env, i), 1);
+	env->coders[i].id = i + 1;
+	env->coders[i].log_lock = &env->log_lock;
+	env->coders[i].config = &env->config;
+	env->coders[i].start_time = env->start_time;
+	env->coders[i].right_dongle = &env->dongles[i];
+	env->coders[i].left_dongle = &env->dongles[(i + 1) % n];
+	env->coders[i].env = env;
+	return (0);
+}
+
 int	init_simulation(t_env *env, int n)
 {
 	int	i;
-	int	check;
 
 	if (inizialite(env, n) != 0)
 		return (1);
 	pthread_mutex_init(&env->log_lock, NULL);
-	i = 0;
+	pthread_mutex_init(&env->state_lock, NULL);
+	env->simulation_over = 0;
 	env->start_time = get_time_in_ms();
-	while (++i < n)
+	i = 0;
+	while (i < n)
 	{
-		if (pthread_mutex_init(&env->dongles[i].mutex, NULL) != 0)
-			return (cleanup(env, i), 1);
-		env->coders[i].id = i + 1;
-		env->coders[i].log_lock = &env->log_lock;
-		env->coders[i].config = &env->config;
-		env->coders[i].start_time = env->start_time;
-		env->coders[i].right_dongle = &env->dongles[i];
-		env->coders[i].left_dongle = &env->dongles[(i + 1) % n];
+		if (init_coder(env, i, n) != 0)
+			return (1);
+		i++;
 	}
 	return (0);
 }
@@ -92,8 +99,8 @@ int	init_simulation(t_env *env, int n)
  */
 void	start_simulation(t_env *env, int n)
 {
-	int	i;
-	pthread_t monitor_thread;
+	int			i;
+	pthread_t	monitor_thread;
 
 	i = 0;
 	while (i < n)
@@ -110,4 +117,3 @@ void	start_simulation(t_env *env, int n)
 		i++;
 	}
 }
-

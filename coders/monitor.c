@@ -6,11 +6,11 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 14:07:27 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/30 14:33:28 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/31 00:43:48 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parsing.h"
+#include "codexion.h"
 
 /**
  * Checks if a specific coder has exceeded the burnout time.
@@ -22,13 +22,13 @@
 long long	check_health(t_coder *coder)
 {
 	long long	current_time;
-	long long	time_since_last_meal;
+	long long	elapsed;
 
-	pthread_mutex_lock(coder->log_lock);
+	pthread_mutex_lock(&coder->state_lock);
 	current_time = get_timestamp(coder->start_time);
-	time_since_last_meal = current_time - coder->last_compile_time;
-    pthread_mutex_unlock(coder->log_lock);
-	return (time_since_last_meal);
+	elapsed = current_time - coder->last_compile_time;
+    pthread_mutex_unlock(&coder->state_lock);
+	return (elapsed);
 }
 
 /**

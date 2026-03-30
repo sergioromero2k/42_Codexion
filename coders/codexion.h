@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing.h                                          :+:      :+:    :+:   */
+/*   codexion.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:47:22 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/28 20:46:24 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/31 00:57:12 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSING_H
-# define PARSING_H
+#ifndef CODEXION_H
+# define CODEXION_H
 
 # include <ctype.h>
 # include <limits.h>
 # include <pthread.h>
-# include <stdarg.h>
-# include <stdint.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
@@ -54,11 +52,13 @@ typedef struct s_coder
 	pthread_t		thread;
 	int				compile_count;
 	long long		last_compile_time;
+	pthread_mutex_t	state_lock;
 	long long		start_time;
 	t_dongle		*left_dongle;
 	t_dongle		*right_dongle;
 	pthread_mutex_t	*log_lock;
 	t_config		*config;
+	struct s_env	*env;
 }					t_coder;
 
 typedef struct s_env
@@ -67,7 +67,10 @@ typedef struct s_env
 	t_coder			*coders;
 	t_dongle		*dongles;
 	pthread_mutex_t	log_lock;
+	pthread_mutex_t	state_lock;
+	pthread_t		monitor;
 	long long		start_time;
+	int				simulation_over;
 }					t_env;
 
 int					parse_config(t_config *config, int argc, char **argv);
@@ -75,6 +78,7 @@ int					parse_config_2(t_config *config, char *str);
 void				cleanup(t_env *env, int i);
 void				*coder_routine(void *arg);
 int					inizialite(t_env *env, int n);
+static int			init_coder(t_env *env, int i, int n);
 int					init_simulation(t_env *env, int n);
 void				start_simulation(t_env *env, int n);
 long long			get_time_in_ms(void);
@@ -83,4 +87,8 @@ void				take_dongles(t_coder *me);
 void				drop_dongles(t_coder *me);
 void				coder_compile(t_coder *me);
 void				coder_sleep_and_think(t_coder *me);
+void				*monitor_routine(void *arg);
+int					sim_is_over(t_env *env);
+void				set_sim_over(t_env *env);
+
 #endif
