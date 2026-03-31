@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/22 05:23:17 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/31 00:43:59 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/31 02:56:42 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,9 @@ static int	is_valid_number(char *str)
 int	parse_config_2(t_config *config, char *str)
 {
 	if (strcmp(str, "fifo") == 0)
-		config->scheduler = SCHED_FIFO;
+		config->scheduler = E_SCHED_FIFO;
 	else if (strcmp(str, "edf") == 0)
-		config->scheduler = SCHED_EDF;
+		config->scheduler = E_SCHED_EDF;
 	else
 		return (write(2, "Error: Scheduler must be 'fifo' or 'edf'\n", 41), 1);
 	return (0);

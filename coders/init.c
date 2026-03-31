@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 06:22:41 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/31 00:56:58 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/31 02:58:13 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	cleanup(t_env *env, int i)
 	while (--i >= 0)
 	{
 		pthread_mutex_destroy(&env->dongles[i].mutex);
-		pthread_mutex_destroy(&env->coders[i].start_time);
+		pthread_mutex_destroy(&env->coders[i].state_lock);
 	}
 	pthread_mutex_destroy(&env->log_lock);
 	free(env->coders);
@@ -39,8 +39,6 @@ void	cleanup(t_env *env, int i)
  */
 int	inizialite(t_env *env, int n)
 {
-	int	i;
-
 	env->coders = malloc(sizeof(t_coder) * n);
 	if (!env->coders)
 		return (write(2, "Error: Coder malloc\n", 20), 1);

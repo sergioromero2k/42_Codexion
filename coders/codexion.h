@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:47:22 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/31 00:57:12 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/03/31 02:59:04 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-typedef enum s_schedule
+typedef enum e_schedule
 {
-	SCHED_FIFO,
-	SCHED_EDF,
+	E_SCHED_FIFO,
+	E_SCHED_EDF,
 }					t_schedule;
 
 typedef struct s_config
@@ -78,7 +78,6 @@ int					parse_config_2(t_config *config, char *str);
 void				cleanup(t_env *env, int i);
 void				*coder_routine(void *arg);
 int					inizialite(t_env *env, int n);
-static int			init_coder(t_env *env, int i, int n);
 int					init_simulation(t_env *env, int n);
 void				start_simulation(t_env *env, int n);
 long long			get_time_in_ms(void);
@@ -86,9 +85,11 @@ long long			get_timestamp(long long start_time);
 void				take_dongles(t_coder *me);
 void				drop_dongles(t_coder *me);
 void				coder_compile(t_coder *me);
-void				coder_sleep_and_think(t_coder *me);
+void				coder_debug(t_coder *me);
+void				coder_refactor(t_coder *me);
 void				*monitor_routine(void *arg);
-int					sim_is_over(t_env *env);
+long long			check_health(t_coder *coder);
+int					check_all_compiled(t_env *env);
 void				set_sim_over(t_env *env);
 
 #endif
