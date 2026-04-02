@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:47:22 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/31 02:59:04 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/02 05:56:44 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,26 @@ typedef struct s_config
 	t_schedule		scheduler;
 }					t_config;
 
+typedef struct s_node
+{
+	int				coder_id;
+	long long		priority;
+}					t_node;
+
+typedef struct s_pqueue
+{
+	t_node			*heap;
+	int				size;
+	int				capacity;
+}					t_pqueue;
+
 typedef struct s_dongle
 {
 	pthread_mutex_t	mutex;
+	pthread_cond_t	cond;
+	int				in_use;
 	long			cooldown_until;
+	t_pqueue		waiters;
 }					t_dongle;
 
 typedef struct s_coder
@@ -91,5 +107,14 @@ void				*monitor_routine(void *arg);
 long long			check_health(t_coder *coder);
 int					check_all_compiled(t_env *env);
 void				set_sim_over(t_env *env);
+
+void				sift_up(t_pqueue *pq, int index);
+void				sift_down(t_pqueue *pq, int index);
+
+int					pqueue_init(t_pqueue *pq, int capacity);
+void				pqueue_push(t_pqueue *pq, int coder_id, long long priority);
+t_node				pqueue_pop(t_pqueue *pq);
+t_node				pqueue_peek(t_pqueue *pq);
+void				pqueue_free(t_pqueue *pq);
 
 #endif
