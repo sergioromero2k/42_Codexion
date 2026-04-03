@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:47:22 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/02 05:56:44 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/03 20:54:21 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <sys/time.h>
+# include <time.h>
 # include <unistd.h>
 
 typedef enum e_schedule
@@ -116,5 +117,10 @@ void				pqueue_push(t_pqueue *pq, int coder_id, long long priority);
 t_node				pqueue_pop(t_pqueue *pq);
 t_node				pqueue_peek(t_pqueue *pq);
 void				pqueue_free(t_pqueue *pq);
+
+int					is_my_turn(t_dongle *dongle, int coder_id);
+int					cooldown_active(t_dongle *dongle);
+struct timespec		ms_to_timespec(long long ms);
+long long			get_priority(t_coder *me);
 
 #endif

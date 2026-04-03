@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 06:22:41 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/31 02:58:13 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/03 19:25:50 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ void	cleanup(t_env *env, int i)
 	{
 		pthread_mutex_destroy(&env->dongles[i].mutex);
 		pthread_mutex_destroy(&env->coders[i].state_lock);
+		pthread_cond_destroy(&env->dongles[i].cond);
+		pqueue_free(&env->dongles[i].waiters);
 	}
 	pthread_mutex_destroy(&env->log_lock);
 	free(env->coders);
@@ -59,6 +61,10 @@ static int	init_coder(t_env *env, int i, int n)
 		return (cleanup(env, i), 1);
 	if (pthread_mutex_init(&env->coders[i].state_lock, NULL) != 0)
 		return (cleanup(env, i), 1);
+	pthread_cond_init(&env->dongles[i].cond, NULL);
+	env->dongles[i].in_use = 0;
+	env->dongles[i].cooldown_until = 0;
+	pqueue_init(&env->dongles[i].waiters, n);
 	env->coders[i].id = i + 1;
 	env->coders[i].log_lock = &env->log_lock;
 	env->coders[i].config = &env->config;
@@ -97,8 +103,7 @@ int	init_simulation(t_env *env, int n)
  */
 void	start_simulation(t_env *env, int n)
 {
-	int			i;
-	pthread_t	monitor_thread;
+	int	i;
 
 	i = 0;
 	while (i < n)
@@ -107,11 +112,12 @@ void	start_simulation(t_env *env, int n)
 			&env->coders[i]);
 		i++;
 	}
-	pthread_create(&monitor_thread, NULL, monitor_routine, env);
+	pthread_create(&env->monitor, NULL, monitor_routine, env);
 	i = 0;
 	while (i < n)
 	{
 		pthread_join(env->coders[i].thread, NULL);
 		i++;
 	}
+	pthread_join(env->monitor, NULL);
 }
