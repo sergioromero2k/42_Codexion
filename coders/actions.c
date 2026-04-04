@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 20:04:59 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/03 20:59:32 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/04 00:35:25 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,10 @@
  */
 void	take_dongles(t_coder *me)
 {
-	long long priority;
-	
-	pthread_mutex_lock(&me->right_dongle->mutex);
-	priority = get_priority(me);
-	pqueue_push(&me->right_dongle->waiters, me->id, priority);
-	pthread_mutex_lock(me->log_lock);
-	printf("%lld %d has taken a dongle\n", get_timestamp(me->start_time),
-		me->id);
-	pthread_mutex_unlock(me->log_lock);
-	pthread_mutex_lock(&me->left_dongle->mutex);
-	pthread_mutex_lock(me->log_lock);
-	printf("%lld %d has taken a dongle\n", get_timestamp(me->start_time),
-		me->id);
-	pthread_mutex_unlock(me->log_lock);
+	take_one_dongles(me, me->right_dongle);
+	if (sim_is_over(me->env))
+		return ;
+	take_one_dongles(me, me->left_dongle);
 }
 
 /**
@@ -45,16 +35,16 @@ void	drop_dongles(t_coder *me)
 {
 	pthread_mutex_lock(&me->right_dongle->mutex);
 	me->right_dongle->in_use = 0;
-	me->right_dongle->cooldown_until = get_time_in_ms() + me->config->dongle_cooldown;
+	me->right_dongle->cooldown_until = get_time_in_ms()
+		+ me->config->dongle_cooldown;
 	pthread_cond_broadcast(&me->right_dongle->cond);
 	pthread_mutex_unlock(&me->right_dongle->mutex);
-	
 	pthread_mutex_lock(&me->left_dongle->mutex);
 	me->left_dongle->in_use = 0;
-	me->left_dongle->cooldown_until = get_time_in_ms() + me->config->dongle_cooldown;
+	me->left_dongle->cooldown_until = get_time_in_ms()
+		+ me->config->dongle_cooldown;
 	pthread_cond_broadcast(&me->left_dongle->cond);
 	pthread_mutex_unlock(&me->left_dongle->mutex);
-
 }
 
 /**

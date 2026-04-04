@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/03 19:31:35 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/03 19:45:12 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/04 01:27:33 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,40 @@ int	cooldown_active(t_dongle *dongle)
 	if (currently_time < dongle->cooldown_until)
 		return (1);
 	return (0);
+}
+void	print_lock(t_coder *me)
+{
+	pthread_mutex_lock(me->log_lock);
+	printf("%lld %d has taken a dongle\n", get_timestamp(me->start_time),
+		me->id);
+	pthread_mutex_unlock(me->log_lock);
+}
+
+void	take_one_dongles(t_coder *me, t_dongle *dongle)
+{
+	struct timespec	ts;
+
+	pthread_mutex_lock(&dongle->mutex);
+	pqueue_push(&dongle->waiters, me->id, get_priority(me));
+	while (dongle->in_use || cooldown_active(dongle) || !is_my_turn(dongle,
+			me->id))
+	{
+		if (cooldown_active(dongle))
+		{
+			ts = ms_to_timespec(dongle->cooldown_until - get_time_in_ms());
+			pthread_cond_timedwait(&dongle->cond, &dongle->mutex, &ts);
+		}
+		else
+			pthread_cond_wait(&dongle->cond, &dongle->mutex);
+		if (sim_is_over(me->env))
+		{
+			pqueue_pop(&dongle->waiters);
+			pthread_mutex_unlock(&dongle->mutex);
+			return ;
+		}
+	}
+	dongle->in_use = 1;
+	pqueue_pop(&dongle->waiters);
+	pthread_mutex_unlock(&dongle->mutex);
+	print_lock(me);
 }

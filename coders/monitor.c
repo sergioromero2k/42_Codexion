@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 14:07:27 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/31 01:55:10 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/04 01:35:11 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,20 +46,33 @@ int	check_all_compiled(t_env *env)
 	}
 	return (1);
 }
-void	set_sim_over(t_env *env)
+int	set_sim_over(t_env *env)
 {
+	int	result;
+
 	pthread_mutex_lock(&env->state_lock);
-	env->simulation_over = 1;
+	result = env->simulation_over = 1;
 	pthread_mutex_unlock(&env->state_lock);
+	return (result);
 }
 
 static void	handle_burnout(t_env *env, int i)
 {
+	int	j;
+
 	pthread_mutex_lock(&env->log_lock);
 	printf("%lld %d burned out\n", get_timestamp(env->start_time),
 		env->coders[i].id);
 	pthread_mutex_unlock(&env->log_lock);
 	set_sim_over(env);
+	j = 0;
+	while (j < env->config.number_of_coders)
+	{
+		pthread_mutex_lock(&env->dongles[j].mutex);
+		pthread_cond_broadcast(&env->dongles[j].cond);
+		pthread_mutex_unlock(&env->dongles[j].mutex);
+		j++;
+	}
 }
 
 /**
@@ -93,4 +106,3 @@ void	*monitor_routine(void *arg)
 	}
 	return (NULL);
 }
-

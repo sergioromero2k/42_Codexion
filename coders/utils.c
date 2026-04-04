@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 09:23:30 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/03 20:53:29 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/04 01:05:01 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,5 @@ long long	get_priority(t_coder *me)
 		return (get_time_in_ms());
 	if (me->config->scheduler == E_SCHED_EDF)
 		return (me->last_compile_time + me->config->time_to_burnout);
+	return (get_time_in_ms());
 }

@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 20:47:22 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/03 20:54:21 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/04 01:05:57 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,21 +93,27 @@ typedef struct s_env
 int					parse_config(t_config *config, int argc, char **argv);
 int					parse_config_2(t_config *config, char *str);
 void				cleanup(t_env *env, int i);
-void				*coder_routine(void *arg);
 int					inizialite(t_env *env, int n);
 int					init_simulation(t_env *env, int n);
 void				start_simulation(t_env *env, int n);
 long long			get_time_in_ms(void);
 long long			get_timestamp(long long start_time);
+
+void				print_lock(t_coder *me);
+void				take_one_dongles(t_coder *me, t_dongle *dongle);
 void				take_dongles(t_coder *me);
 void				drop_dongles(t_coder *me);
+
 void				coder_compile(t_coder *me);
 void				coder_debug(t_coder *me);
 void				coder_refactor(t_coder *me);
 void				*monitor_routine(void *arg);
 long long			check_health(t_coder *coder);
 int					check_all_compiled(t_env *env);
-void				set_sim_over(t_env *env);
+
+int					set_sim_over(t_env *env);
+int					sim_is_over(t_env *env);
+void				*coder_routine(void *arg);
 
 void				sift_up(t_pqueue *pq, int index);
 void				sift_down(t_pqueue *pq, int index);
