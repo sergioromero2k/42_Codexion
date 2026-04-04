@@ -1,5 +1,7 @@
 *This project has been created as part of the 42 curriculum by serromer.*
 
+# CODEXION
+
 ## Description
 
 Codexion is a concurrency simulation written in C that models a shared co-working hub where coders compete for limited hardware resources. Each coder must acquire two rare USB dongles simultaneously to compile their quantum code before burning out from inactivity. This project is a complex variant of the classic Dining Philosophers problem, introducing additional constraints such as resource cooldowns and dynamic scheduling policies (FIFO and EDF) to prevent deadlocks and ensure fair resource distribution.
