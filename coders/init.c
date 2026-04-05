@@ -6,14 +6,15 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 06:22:41 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/03 19:25:50 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/05 04:00:58 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
 /**
- * Destroys initialized mutex and frees allocated memory.
+ * Releases all synchronized resources and deadlocates dynamic
+ * memory to prevent leaks.
  *
  * @param env Pointer to the main enviroment structure.
  * @param i Number of succesfully initialized dongle mutexes to destroy.
@@ -55,6 +56,15 @@ int	inizialite(t_env *env, int n)
 	return (0);
 }
 
+/**
+ * Initializes mutexes, conditions,
+	and internal variables for a specific coder and its associated dongle.
+ *
+ * @param env Pointer to the main environment structure.
+ * @param i Current index of the coder/dongle being initialized.
+ * @param n Total number of coders in the simulation.
+ * @return 0 on success, or 1 if a mutex initialization fails.
+ */
 static int	init_coder(t_env *env, int i, int n)
 {
 	if (pthread_mutex_init(&env->dongles[i].mutex, NULL) != 0)
@@ -75,6 +85,14 @@ static int	init_coder(t_env *env, int i, int n)
 	return (0);
 }
 
+/**
+ * Setps up the global simulation state,
+	including memory allocation and resource initialization for all participants.
+ *
+ * @param env Pointer to the main environment structure.
+ * @param n Total number of coders/dongles to participate in the simulation.
+ * @return 0 on success, or 1 if any initialization step fails.
+ */
 int	init_simulation(t_env *env, int n)
 {
 	int	i;

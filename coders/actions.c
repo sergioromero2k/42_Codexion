@@ -6,16 +6,16 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 20:04:59 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/04 00:35:25 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/05 04:12:03 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
 /**
- * Coder attempts to pick up both adjacent dongles.
- * The coder locks the right dongle first, then the left one.
- *
+ * Attempts to acquire both the right and left dongles 
+ * in sequence to begin compilation.
+ * 
  * @param me Pointer to the coder's individual structure.
  */
 void	take_dongles(t_coder *me)
@@ -27,7 +27,8 @@ void	take_dongles(t_coder *me)
 }
 
 /**
- * Releases both dongles held by the coder.
+ * Releases both held dongles, sets their cooldown period,
+ * and signals any waiting threads.
  *
  * @param me Pointer to th e coder's individual structure.
  */
@@ -48,9 +49,9 @@ void	drop_dongles(t_coder *me)
 }
 
 /**
- * Simulates the compilation process.
- * Logs the "is eating" status and updates the last_compile_time.
- *
+ *Handles the compilation phase, updating the coder's internal state
+ * and logging the activity.
+ * 
  * @param me Pointer to the coder's individual structure.
  */
 void	coder_compile(t_coder *me)
@@ -67,6 +68,11 @@ void	coder_compile(t_coder *me)
 	pthread_mutex_unlock(&me->state_lock);
 }
 
+/**
+ * Logs the debugging status and pauses execution for the configured duration.
+ * 
+ * @param me Pointer to the coder's individual structure.
+ */
 void	coder_debug(t_coder *me)
 {
 	pthread_mutex_lock(me->log_lock);
@@ -76,7 +82,7 @@ void	coder_debug(t_coder *me)
 }
 
 /**
- * Simulates the debugging and refactoring phases (sleep and thimk).
+ * Simulates the refactoring phase by logging the action and pausing the thread.
  *
  * @param me Pointer to the coder's individual structure.
  */
