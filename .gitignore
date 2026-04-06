@@ -40,12 +40,6 @@ coders/*.out
 /debug/
 /release/
 
-# CMake files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-
 # Autotools files
 configure
 config.status
