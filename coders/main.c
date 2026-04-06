@@ -6,12 +6,21 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/21 17:33:52 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/31 02:53:03 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/06 22:21:32 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
+/**
+ * The entry point of the application which initializes the environment,
+ * parses input arguments, and manages the simulation lifecycle.
+ * 
+ * @param argc The number of command-line arguments.
+ * @param argv The array of command-line argument strings.
+ * @return 0 on successful completion, or 1 if an error occurs during
+ * configuration or initialization.
+ */
 int	main(int argc, char **argv)
 {
 	t_env	env;

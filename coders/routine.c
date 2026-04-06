@@ -6,12 +6,19 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 14:07:21 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/03/31 02:28:08 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/06 22:13:59 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
+/**
+ * Thread-safely checks the global enviroment state to determine
+ * if the simulaton should terminate.
+ * 
+ * @param env Pointer to the main environment structure.
+ * @return 1 if the simulation has ended, 0 otherwise.
+ */
 int	sim_is_over(t_env *env)
 {
 	int	simulation;
@@ -25,8 +32,8 @@ int	sim_is_over(t_env *env)
 /**
  * Main routine for each coder thread.
  *
- * @param arg Pointer to the specific t_coder structure.
- * @return void* Returns NULL upon thread completion.
+ * @param arg Type-casted pointer to the specific t_coder structure.
+ * @return Always returns NULL upon thread exit.
  */
 void	*coder_routine(void *arg)
 {

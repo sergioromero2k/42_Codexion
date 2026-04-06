@@ -6,18 +6,18 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 14:07:27 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/04 01:35:11 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/06 22:20:02 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
 /**
- * Checks if a specific coder has exceeded the burnout time.
- * We use log_lock to ensure we read a stable value of last_compile_time.
+ * Calculates the time elapsed since the coder's last successful
+ * compilation to monitor for potential burnout.
  *
  * @param coder Pointer to the coder structure being checked.
- * @return Time in ms since last compilation.
+ * @return Elapsed time in milliseconds since the last compilation.
  */
 long long	check_health(t_coder *coder)
 {
@@ -29,6 +29,13 @@ long long	check_health(t_coder *coder)
 	return (elapsed);
 }
 
+/**
+ * Verifies if every coder in the simulatiom has reached the required number of
+ * successful compilations.
+ *
+ * @param env Pointer to the main environment structure.
+ * @return 1 if all coders have finished their tasks, 0 otherwise.
+ */
 int	check_all_compiled(t_env *env)
 {
 	int	i;
@@ -46,16 +53,32 @@ int	check_all_compiled(t_env *env)
 	}
 	return (1);
 }
+
+/**
+ * Safely updates the glboal simulation state to signal that the simulation
+ * should stop.
+ *
+ * @param env Pointer to the main environment structure.
+ * @return THe updated simulation status (1).
+ */
 int	set_sim_over(t_env *env)
 {
 	int	result;
 
 	pthread_mutex_lock(&env->state_lock);
-	result = env->simulation_over = 1;
+	env->simulation_over = 1;
+	result = env->simulation_over;
 	pthread_mutex_unlock(&env->state_lock);
 	return (result);
 }
 
+/**
+ * Manages the termination process when a coder fails,
+ * logging the burnout and waking up all threads to exit.
+ *
+ * @param env Pointer to the main environment structure.
+ * @param i Index of the coder who triggered the burnout.
+ */
 static void	handle_burnout(t_env *env, int i)
 {
 	int	j;
@@ -76,11 +99,11 @@ static void	handle_burnout(t_env *env, int i)
 }
 
 /**
- * Main monitor loop that patrols all coders for death conditions.
- * It iterates through all coders and checks if any has exceeded the burnout.
+ * The central observer thread that continuously patrols
+ * coders to check for burnout conditions or goal completion.
  *
- * @param arg Pointer to the global environment (t_env).
- * @return NULL when the simulation ends.
+ * @param arg Generic pointer to the global t_env structure.
+ * @return NULL when the simulation reaches a termination state.
  */
 void	*monitor_routine(void *arg)
 {

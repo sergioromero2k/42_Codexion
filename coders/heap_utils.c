@@ -6,12 +6,19 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 05:07:49 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/02 05:23:14 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/06 22:26:28 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
+/**
+ * Swaps two nodes within the heap array of the priority queue.
+ *
+ * @param pq Pointer to the priority queue structure.
+ * @param index Index of the first node to swap.
+ * @param padre Index of the second node (typically the parent) to swap.
+ */
 static void	swap(t_pqueue *pq, int index, int padre)
 {
 	t_node	temp;
@@ -21,6 +28,13 @@ static void	swap(t_pqueue *pq, int index, int padre)
 	pq->heap[padre] = temp;
 }
 
+/**
+ * Restores the min-heap property by moving a node up the tree until
+ * it is in the correct position based on its priority.
+ *
+ * @param pq Pointer to the priority queue structure.
+ * @param index The starting index of the node to move upward.
+ */
 void	sift_up(t_pqueue *pq, int index)
 {
 	int	padre;
@@ -38,11 +52,18 @@ void	sift_up(t_pqueue *pq, int index)
 	}
 }
 
+/**
+ * Restores the min-heap property by moving a node down the tree,
+ * ensuring that parent nodes always have a higher priority than their children.
+ *
+ * @param pq Pointer to the priority queue structure.
+ * @param index The starting index of the node to move downward.
+ */
 void	sift_down(t_pqueue *pq, int index)
 {
-	int left_child;
-	int right_child;
-	int smallest;
+	int	left_child;
+	int	right_child;
+	int	smallest;
 
 	while (2 * index + 1 < pq->size)
 	{

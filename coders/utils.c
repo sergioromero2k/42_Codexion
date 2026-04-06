@@ -6,18 +6,16 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 09:23:30 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/04 01:05:01 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/04/06 22:11:49 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
 /**
- * Gets the current system time in milliseconds.
- * Multiplies the seconds by 1000 and divides the microseconds by 1000
- * to standarsize the unit to milliseconds.
- *
- * @return long long The total in milliseconds since 1970.
+ * Retrieves the current system time converted into milliseconds.
+ * 
+ * @return Total milliseconds elapsed since the Epoch (1970).
  */
 long long	get_time_in_ms(void)
 {
@@ -31,14 +29,21 @@ long long	get_time_in_ms(void)
 /**
  * Calculates how much has passed since the simulation started.
  *
- * @param star_time The time saved at the beginning in env->start_time.
- * @return long long Elapsed milliseconds (0, 100, 2500, etc).
+ * @param start_time The recorded start time of the simulation.
+ * @return Elapsed time in milliseconds.
  */
 long long	get_timestamp(long long start_time)
 {
 	return (get_time_in_ms() - start_time);
 }
 
+/**
+ * Converts a millisecond duration int oan absolute timespec struct
+ * for use in timed thread operations.
+ * 
+ * @param ms The amount of milliseconds to add the current time.
+ * @return A timespec struct representing the future absolute time.
+ */
 struct timespec	ms_to_timespec(long long ms)
 {
 	struct timeval	tv;
@@ -55,6 +60,13 @@ struct timespec	ms_to_timespec(long long ms)
 	return (ts);
 }
 
+/**
+ * Calculates the scheduling priority of a coder based on the selected
+ * algorithm (FIFO or EDF).
+ * 
+ * @param me Pointer to the coder's individual structure.
+ * @return The priority value (lower values typically represent higher priority).
+ */
 long long	get_priority(t_coder *me)
 {
 	if (me->config->scheduler == E_SCHED_FIFO)
