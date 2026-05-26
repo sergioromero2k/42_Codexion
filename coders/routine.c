@@ -6,11 +6,29 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 14:07:21 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/04/06 22:13:59 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/05/26 18:40:42 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
+
+/**
+ * Safely updates the glboal simulation state to signal that the simulation
+ * should stop.
+ *
+ * @param env Pointer to the main environment structure.
+ * @return THe updated simulation status (1).
+ */
+int	set_sim_over(t_env *env)
+{
+	int	result;
+
+	pthread_mutex_lock(&env->state_lock);
+	env->simulation_over = 1;
+	result = env->simulation_over;
+	pthread_mutex_unlock(&env->state_lock);
+	return (result);
+}
 
 /**
  * Thread-safely checks the global enviroment state to determine

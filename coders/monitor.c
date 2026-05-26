@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/30 14:07:27 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/05/26 08:47:33 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/05/26 18:41:24 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,19 +54,12 @@ int	check_all_compiled(t_env *env)
 	return (1);
 }
 
-/**
- * Safely updates the glboal simulation state to signal that the simulation
- * should stop.
- *
- * @param env Pointer to the main environment structure.
- * @return THe updated simulation status (1).
- */
-int	set_sim_over(t_env *env)
+
+int	is_simulation_over(t_env *env)
 {
 	int	result;
 
 	pthread_mutex_lock(&env->state_lock);
-	env->simulation_over = 1;
 	result = env->simulation_over;
 	pthread_mutex_unlock(&env->state_lock);
 	return (result);
@@ -113,12 +106,11 @@ void	*monitor_routine(void *arg)
 	env = (t_env *)arg;
 	while (!is_simulation_over(env))
 	{
-		i = 0;
-		while (i < env->config.number_of_coders)
+		i = -1;
+		while (++i < env->config.number_of_coders)
 		{
 			if (check_health(&env->coders[i]) >= env->config.time_to_burnout)
 				return (handle_burnout(env, i), NULL);
-			i++;
 		}
 		if (check_all_compiled(env))
 		{
