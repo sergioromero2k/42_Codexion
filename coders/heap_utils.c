@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/02 05:07:49 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/05/26 19:03:43 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/05/26 19:09:52 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static void	swap(t_pqueue *pq, int index, int padre)
 	pq->heap[padre] = temp;
 }
 
-static int	has_priority(t_node a, t_node b)
+int	has_priority(t_node a, t_node b)
 {
 	if (a.priority < b.priority)
 		return (1);

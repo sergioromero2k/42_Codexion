@@ -6,7 +6,7 @@
 /*   By: sergio-alejandro <sergio-alejandro@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 06:22:41 by sergio-alej       #+#    #+#             */
-/*   Updated: 2026/05/26 18:48:47 by sergio-alej      ###   ########.fr       */
+/*   Updated: 2026/05/26 19:09:20 by sergio-alej      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	cleanup(t_env *env, int initialized_count)
 		i++;
 	}
 	pthread_mutex_destroy(&env->log_lock);
-	pthread_mutex_destroy(&env->start_time);
+	pthread_mutex_destroy(&env->state_lock);
 	if (env->coders)
 	{
 		free(env->coders);
